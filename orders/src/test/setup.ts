@@ -1,5 +1,5 @@
-import { MongoMemoryServer } from "mongodb-memory-server";
-import mongoose from "mongoose";
+import { MongoMemoryServer } from 'mongodb-memory-server';
+import mongoose from 'mongoose';
 import jwt from 'jsonwebtoken';
 
 declare global {
@@ -14,7 +14,7 @@ jest.mock('../nats-wrapper');
 
 let mongo: any;
 beforeAll(async () => {
-  process.env.JWT_KEY = "asdf";
+  process.env.JWT_KEY = 'asdf';
 
   mongo = new MongoMemoryServer();
   const mongoUri = await mongo.getUri();
@@ -26,6 +26,7 @@ beforeAll(async () => {
 });
 
 beforeEach(async () => {
+  jest.clearAllMocks();
   const collections = await mongoose.connection.db.collections();
 
   for (let collection of collections) {
@@ -42,7 +43,7 @@ global.signin = () => {
   // Build a JWT payload, { id, email }
   const payload = {
     id: new mongoose.Types.ObjectId().toHexString(),
-    email: 'test@test.com'
+    email: 'test@test.com',
   };
 
   // Create the JWT!
