@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { CustomError } from "../errors/custom-errors";
+import { RequestValidationError } from "../errors/request-validation-error";
 
 export const errorHandler = (
   err: Error,
@@ -7,10 +7,15 @@ export const errorHandler = (
   res: Response,
   next: NextFunction
 ) => {
-  if (err instanceof CustomError) {
-    return res.status(err.statusCode).send({ errors: err.serializeErrors() });
+  if (err instanceof RequestValidationError) {
+    const formattedErrors = err.errors.map((error) => {
+      return {
+        message: error.msg,
+        field: error.param,
+      };
+    });
+    return res.status(400).send({ errors: formattedErrors });
   }
 
-  console.error(err);
-  res.status(400).send({ errors: [{ message: "Something went wrong" }] });
+  return res.status(500).send({ message: "Something went wrong" });
 };
